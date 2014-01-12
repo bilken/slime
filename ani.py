@@ -1,14 +1,12 @@
 #!/usr/bin/python
 
-import pygame, sys, json, math
+import pygame, sys, json, math, operator
 from pygame.locals import *
 from random import randint
 
 from Slime import Animation
 
-if len(sys.argv) != 3:
-    print 'Missing arguments: yourImage.png yourAnimation.ani'
-    exit(1)
+alist = [] # chained animations
 
 pygame.init()
 
@@ -19,7 +17,13 @@ pygame.display.set_caption("ani")
 
 clock = pygame.time.Clock()
 
-a = Animation(sys.argv[1], sys.argv[2])
+for i in range(1, len(sys.argv), 2):
+    alist.append(Animation(sys.argv[i], sys.argv[i + 1]))
+
+if len(alist) == 0:
+    print 'Missing animations: yourImage.png yourAnimation.ani [next.png next.ani ...]'
+    exit(1)
+
 
 r = 0
 while 1:
@@ -31,13 +35,15 @@ while 1:
 
     screen.fill((50,50,50))
 
-    center = [screenw / 2, screenh / 2]
-
-    rimg = a.rotate(r)
-    rect = rimg.get_rect()
-    rect.center = center
-
-    screen.blit(rimg, rect)
+    start = [screenw / 2, screenh / 2]
+    tr = r
+    for a in alist:
+        rimg = a.rotate(tr)
+        rect = rimg.get_rect()
+        rect.center = start
+        screen.blit(rimg, rect)
+        start = tuple(map(operator.add, start, a.tip(tr)))
+        tr = -2 * tr
 
     pygame.display.flip()
 
