@@ -4,9 +4,7 @@ import pygame, sys, json, math, operator
 from pygame.locals import *
 from random import randint
 
-from Slime import Animation
-
-alist = [] # chained animations
+from Slime import Animation, Animations
 
 pygame.init()
 
@@ -17,13 +15,15 @@ pygame.display.set_caption("ani")
 
 clock = pygame.time.Clock()
 
-for i in range(1, len(sys.argv), 2):
-    alist.append(Animation(sys.argv[i], sys.argv[i + 1]))
+aFile = 'Slime.ani'
+attack = "strike"
 
-if len(alist) == 0:
-    print 'Missing animations: yourImage.png yourAnimation.ani [next.png next.ani ...]'
-    exit(1)
+if len(sys.argv) == 2:
+    attack = sys.argv[1]
 
+a = Animations(aFile)
+order = ["hp", "mp", "sword"]
+#order = ["hp"]
 
 r = 0
 while 1:
@@ -31,19 +31,23 @@ while 1:
         if event.type == pygame.QUIT:
             running = False
 
-    r = r + 5
-
     screen.fill((50,50,50))
 
-    start = [screenw / 2, screenh / 2]
-    tr = r
-    for a in alist:
-        rimg = a.rotate(tr)
+    tip = [screenw / 2, screenh / 2]
+    angleOffset = 0
+
+    for o in order:
+        if a.done(o):
+            a.begin(o, attack)
+
+        rimg = a.get(o, angleOffset)
+
         rect = rimg.get_rect()
-        rect.center = start
+        rect.center = tip
+
         screen.blit(rimg, rect)
-        start = tuple(map(operator.add, start, a.tip(tr)))
-        tr = -2 * tr
+        tip = tuple(map(operator.add, tip, a.tip(o, angleOffset)))
+        angleOffset += a.angle(o)
 
     pygame.display.flip()
 

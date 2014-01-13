@@ -1,6 +1,37 @@
 
 import pygame, json, math
 
+class Animations:
+    def __init__(self, aniName):
+        f = open(aniName)
+        ani = json.load(f)
+        f.close()
+
+        self.items = dict()
+        for k in ani['items']:
+            self.items[k] = Animation(ani['items'][k])
+
+        self.sequences = dict()
+        for k in ani['sequences']:
+            self.sequences[k] = ani['sequences'][k]
+
+    def begin(self, item, sequence):
+        if sequence not in self.sequences:
+            return
+        self.items[item].begin(self.sequences[sequence])
+
+    def done(self, item):
+        return self.items[item].done()
+
+    def get(self, item, angleOffset):
+        return self.items[item].get(angleOffset)
+
+    def tip(self, item, angleOffset):
+        return self.items[item].tip(angleOffset)
+
+    def angle(self, item):
+        return self.items[item].angle
+
 class Animation:
     """
 * Convert image so that the base is the start
@@ -8,11 +39,13 @@ class Animation:
 * Detect collisions on line from start to end point
 * Execute animation sequences
 """
-    def __init__(self, imgName, aniName):
-        self.name = imgName
-        self.ani = json.load(open(aniName))
+    def __init__(self, ani):
+        self.ani = ani
 
-        img = pygame.image.load(imgName).convert_alpha()
+        self.sequence = None
+        self.name = self.ani['file']
+        self.variety = self.ani['variety']
+        img = pygame.image.load(self.name).convert_alpha()
 
         iw = img.get_width()
         ih = img.get_height()
@@ -21,6 +54,9 @@ class Animation:
         sy = self.ani['base']['y']
         ex = self.ani['tip']['x']
         ey = self.ani['tip']['y']
+
+        self.orgAngle = self.ani['angle']
+        self.angle = self.orgAngle
 
         self.dx = ex - sx
         self.dy = ey - sy
@@ -42,20 +78,35 @@ class Animation:
 
         print '%s size (%d, %d), bound (%d, %d), at (%d, %d)' % (self.name, iw, ih, brw, brh, brx, bry)
 
-        brmx = brw / 2
-        brmy = brh / 2
+    def begin(self, sequences):
+        self.angle = self.orgAngle
+        if self.variety not in sequences:
+            self.sequence = None
+            return
+        self.sequence = sequences[self.variety]
+        print self.sequence
+        self.index = 0
 
-    def get(self):
-        return self.br
+    def done(self):
+        return (self.sequence == None)
 
-    # Returns rotated image with "base" at the center
-    def rotate(self, r):
-        return pygame.transform.rotate(self.br, r)
+    # Returns image with "base" at the center
+    def get(self, angleOffset):
+        if self.sequence:
+            self.angle += self.sequence[self.index]
+            self.index += 1
+            if self.index >= len(self.sequence):
+                self.sequence = None
+                self.index = 0
+        return pygame.transform.rotate(self.br, self.angle + angleOffset)
 
     # Offset from "base" to "tip"
-    def tip(self, r=0):
-        rad = math.radians(-r)
+    def tip(self, angleOffset):
+        rad = math.radians(-(self.angle+angleOffset))
         x = self.dx * math.cos(rad) - self.dy * math.sin(rad)
         y = self.dx * math.sin(rad) + self.dy * math.cos(rad)
         return (int(x), int(y))
+
+    def angleOffset(self):
+        return self.angle - self.orgAngle
 
