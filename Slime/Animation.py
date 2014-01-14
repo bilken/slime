@@ -1,10 +1,14 @@
 
 import pygame, json, math
+import demjson
 
 class Animations:
     def __init__(self, aniName):
         f = open(aniName)
-        ani = json.load(f)
+        try:
+            ani = json.load(f)
+        except:
+            demjson.decode(f.read())
         f.close()
 
         self.items = dict()
@@ -14,6 +18,9 @@ class Animations:
         self.sequences = dict()
         for k in ani['sequences']:
             self.sequences[k] = ani['sequences'][k]
+
+        self.forms = ani['forms']
+        self.sets = ani['sets']
 
     def begin(self, item, sequence):
         if sequence not in self.sequences:
@@ -65,18 +72,18 @@ class Animation:
         brx = 0
         if brw < iw:
             brw = 2 * (iw - sx)
-            brx = brw / 2
+            brx = brw / 2 - sx
         brh = 2 * sy
         bry = 0
         if brh < ih:
             brh = 2 * (ih - sy)
-            bry = brh / 2
+            bry = brh / 2 - sy
 
         self.br = pygame.Surface((brw, brh)).convert_alpha()
         self.br.fill((0,0,0,0))
         self.br.blit(img, (brx, bry))
 
-        print '%s size (%d, %d), bound (%d, %d), at (%d, %d)' % (self.name, iw, ih, brw, brh, brx, bry)
+        print '%s size (%d, %d), start (%d, %d), bound (%d, %d), at (%d, %d)' % (self.name, iw, ih, sx, sy, brw, brh, brx, bry)
 
     def begin(self, sequences):
         self.angle = self.orgAngle

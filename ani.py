@@ -16,27 +16,21 @@ pygame.display.set_caption("ani")
 clock = pygame.time.Clock()
 
 aFile = 'Slime.ani'
-attack = "strike"
+attack = 'strike'
 
 if len(sys.argv) == 2:
     attack = sys.argv[1]
 
 a = Animations(aFile)
-order = ["hp", "mp", "sword"]
-#order = ["hp"]
+myform = a.forms['homonid']
+#myform = a.forms['upper']
+myset = a.sets['hero']
 
-r = 0
-while 1:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    screen.fill((50,50,50))
-
-    tip = [screenw / 2, screenh / 2]
-    angleOffset = 0
-
-    for o in order:
+def drawChain(myform, myset, currentForm, tip, angleOffset):
+    if currentForm not in myform:
+        return
+    for v in myform[currentForm]:
+        o = myset[v]
         if a.done(o):
             a.begin(o, attack)
 
@@ -46,12 +40,30 @@ while 1:
         rect.center = tip
 
         screen.blit(rimg, rect)
-        tip = tuple(map(operator.add, tip, a.tip(o, angleOffset)))
-        angleOffset += a.angle(o)
+
+        newTip = tuple(map(operator.add, tip, a.tip(o, angleOffset)))
+        newOffset = angleOffset + a.angle(o)
+
+        drawChain(myform, myset, v, newTip, newOffset)
+
+
+r = 0
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    screen.fill((50,50,50))
+
+    tip = [screenw / 2, screenh / 2]
+    angleOffset = 0
+
+    drawChain(myform, myset, 'start', tip, angleOffset)
 
     pygame.display.flip()
 
-    clock.tick(30)
+    clock.tick(6)
 
-pygame.quit ()
+pygame.quit()
 
