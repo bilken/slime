@@ -2,91 +2,138 @@
   "items":{
     "sword":{
         "file": "pic/startSword.png",
-        "rect": [0, 0, 0, 0],
         "base": {"x":10, "y":105},
-        "tip":  {"x":10, "y":0},
-        "angle": 110,
-        "variety": "sword"
+        "tip": {"x":10, "y":0},
+        "angle": 110
     },
-    "fa1":{
-        "file": "pic/forearm.png",
-        "rect": [0, 0, 0, 0],
-        "base": {"x":1, "y":1},
-        "tip":  {"x":6, "y":21},
-        "angle": 0,
-        "variety": "forearm"
+    "nudeHead":{
+        "file": "pic/noEquip/head.png",
+        "base": {"x":11, "y":32},
+        "tip": {"x":11, "y":0},
+        "angle": 0
     },
-    "ua1":{
-        "file": "pic/upperArm.png",
-        "rect": [0, 0, 0, 0],
-        "base": {"x":8, "y":2},
-        "tip":  {"x":5, "y":22},
-        "angle": 0,
-        "variety": "upperArm"
+    "nudeLeftHand":{
+        "file": "pic/noEquip/leftFist.png",
+        "base": {"x":9, "y":0},
+        "tip": {"x":9, "y":28},
+        "angle": 0
     },
-    "rh1":{
-        "file": "pic/rightFist.png",
-        "rect": [0, 0, 0, 0],
-        "base": {"x":7, "y":7},
-        "tip":  {"x":21, "y":21},
-        "angle": -45,
-        "variety": "rightHand"
+    "nudeLeftFoot":{
+        "file": "pic/noEquip/leftFoot.png",
+        "base": {"x":13, "y":3},
+        "tip": {"x":14, "y":35},
+        "angle": 0
     },
-    "hp":{
-        "file": "pic/fullHP.png",
-        "rect": [0, 0, 0, 0],
-        "base": {"x":0, "y":15},
-        "tip":  {"x":187, "y":16},
-        "angle": -90,
-        "variety": "upperArm"
+    "nudeLeftFore":{
+        "file": "pic/noEquip/leftFore.png",
+        "base": {"x":7, "y":0},
+        "tip": {"x":7, "y":22},
+        "angle": 0
     },
-    "mp":{
-        "file": "pic/fullMP.png",
-        "rect": [0, 0, 0, 0],
-        "base": {"x":0, "y":8},
-        "tip":  {"x":167, "y":8},
-        "angle": -90,
-        "variety": "forearm"
+    "nudeLeftLeg":{
+        "file": "pic/noEquip/leftLeg.png",
+        "base": {"x":12, "y":0},
+        "tip": {"x":12, "y":34},
+        "angle": 0
+    },
+    "nudeLeftUpper":{
+        "file": "pic/noEquip/leftUpper.png",
+        "base": {"x":8, "y":0},
+        "tip": {"x":9, "y":24},
+        "angle": 0
+    },
+    "nudeRightHand":{
+        "file": "pic/noEquip/rightFist.png",
+        "base": {"x":9, "y":0},
+        "tip": {"x":9, "y":28},
+        "angle": 0
+    },
+    "nudeRightFoot":{
+        "file": "pic/noEquip/rightFoot.png",
+        "base": {"x":13, "y":3},
+        "tip": {"x":14, "y":35},
+        "angle": 0
+    },
+    "nudeRightFore":{
+        "file": "pic/noEquip/rightFore.png",
+        "base": {"x":7, "y":0},
+        "tip": {"x":7, "y":22},
+        "angle": 0
+    },
+    "nudeRightLeg":{
+        "file": "pic/noEquip/rightLeg.png",
+        "base": {"x":12, "y":0},
+        "tip": {"x":12, "y":32},
+        "angle": 0
+    },
+    "nudeRightUpper":{
+        "file": "pic/noEquip/rightUpper.png",
+        "base": {"x":8, "y":0},
+        "tip": {"x":9, "y":24},
+        "angle": 0
+    },
+    "nudeTorso":{
+        "file": "pic/noEquip/torso.png",
+        "base": {"x":20, "y":53},
+        "tip": {"x":20, "y":0},
+        "head": {"x":20, "y":3},
+        "rightUpper": {"x":3, "y":12},
+        "leftUpper": {"x":37, "y":12},
+        "rightLeg": {"x":12, "y":50},
+        "leftLeg": {"x":28, "y":50},
+        "angle": 0
     }
   },
   "forms":{
     "homonid":{
-        "start":["upperArm"],
-        "upperArm":["forearm"],
-        "forearm":["rightHand"],
-        "rightHand":["weapon"]
-    },
-    "sword":{
-        "start":["weapon"]
-    },
-    "fore":{
-        "start":["forearm"]
-    },
-    "upper":{
-        "start":["upperArm"]
+        "zorder":["leftHand", "leftFore", "leftUpper", "leftLeg", "leftFoot", "torso", "head", "rightLeg", "rightFoot", "rightUpper", "rightFore", "rightHand", "weapon"],
+        "base":["torso"],
+        "torso":["leftUpper", "leftLeg", "head", "rightLeg", "rightUpper"],
+        "leftUpper":["leftFore"],
+        "leftFore":["leftHand"],
+        "leftHand":["weapon"],
+        "leftLeg":["leftFoot"],
+        "rightUpper":["rightFore"],
+        "rightFore":["rightHand"],
+        "rightHand":["weapon"],
+        "rightLeg":["rightFoot"]
     }
   },
   "sets":{
-    "hero":{
-        "forearm":"fa1",
-        "upperArm":"ua1",
+    "nude":{
+        "torso":"nudeTorso",
+        "head":"nudeHead",
+        "leftUpper":"nudeLeftUpper",
+        "leftFore":"nudeLeftFore",
+        "leftHand":"nudeLeftHand",
+        "leftLeg":"nudeLeftLeg",
+        "leftFoot":"nudeLeftFoot",
+        "rightUpper":"nudeRightUpper",
+        "rightFore":"nudeRightFore",
+        "rightHand":"nudeRightHand",
+        "rightLeg":"nudeRightLeg",
+        "rightFoot":"nudeRightFoot",
+        "weapon":"sword"
+    },
+    "blah":{
+        "rightFore":"rfa1",
+        "rightUpper":"rua1",
         "rightHand":"rh1",
         "weapon":"sword"
     }
   },
   "sequences":{
     "strike":{
-        "upperArm":[5, 8, 10, 13, 15, 15, 13, 8, 5, 5],
-        "forearm":[5, 8, 10, 13, 15, 15, 13, 8, 5, 5],
+        "rightUpper":[5, 8, 10, 13, 15, 15, 13, 8, 5, 5],
+        "rightFore":[5, 8, 10, 13, 15, 15, 13, 8, 5, 5],
         "sword":[5, 8, 10, 13, 15, 15, 13, 8, 5, 5]
     },
     "dive":{
-        "upperArm":[-15, -15, -15, -15, -15, -15, 0, 0, 0, 0, 0, 0],
-        "forearm":[-15, -15, -15, -15, -15, -15, 0, 0, 0, 0, 0, 0],
+        "rightUpper":[-15, -15, -15, -15, -15, -15, 0, 0, 0, 0, 0, 0],
+        "rightFore":[-15, -15, -15, -15, -15, -15, 0, 0, 0, 0, 0, 0],
         "sword":[-15, -15, -15, -15, -15, -15, 0, 0, 0, 0, 0, 0]
     },
     "no":{
-        "rightHand":[-15, -15, -15, -15, -15, -15, 0, 0, 0, 0, 0, 0]
     }
   }
 }

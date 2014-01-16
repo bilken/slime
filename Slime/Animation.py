@@ -22,10 +22,10 @@ class Animations:
         self.forms = ani['forms']
         self.sets = ani['sets']
 
-    def begin(self, item, sequence):
+    def begin(self, item, variety, sequence):
         if sequence not in self.sequences:
             return
-        self.items[item].begin(self.sequences[sequence])
+        self.items[item].begin(self.sequences[sequence], variety)
 
     def done(self, item):
         return self.items[item].done()
@@ -33,8 +33,8 @@ class Animations:
     def get(self, item, angleOffset):
         return self.items[item].get(angleOffset)
 
-    def tip(self, item, angleOffset):
-        return self.items[item].tip(angleOffset)
+    def tip(self, item, endpoint, angleOffset):
+        return self.items[item].tip(endpoint, angleOffset)
 
     def angle(self, item):
         return self.items[item].angle
@@ -51,7 +51,6 @@ class Animation:
 
         self.sequence = None
         self.name = self.ani['file']
-        self.variety = self.ani['variety']
         img = pygame.image.load(self.name).convert_alpha()
 
         iw = img.get_width()
@@ -59,14 +58,10 @@ class Animation:
 
         sx = self.ani['base']['x']
         sy = self.ani['base']['y']
-        ex = self.ani['tip']['x']
-        ey = self.ani['tip']['y']
 
         self.orgAngle = self.ani['angle']
         self.angle = self.orgAngle
 
-        self.dx = ex - sx
-        self.dy = ey - sy
 
         brw = 2 * sx
         brx = 0
@@ -85,13 +80,12 @@ class Animation:
 
         print '%s size (%d, %d), start (%d, %d), bound (%d, %d), at (%d, %d)' % (self.name, iw, ih, sx, sy, brw, brh, brx, bry)
 
-    def begin(self, sequences):
+    def begin(self, sequences, variety):
         self.angle = self.orgAngle
-        if self.variety not in sequences:
+        if variety not in sequences:
             self.sequence = None
             return
-        self.sequence = sequences[self.variety]
-        print self.sequence
+        self.sequence = sequences[variety]
         self.index = 0
 
     def done(self):
@@ -107,11 +101,22 @@ class Animation:
                 self.index = 0
         return pygame.transform.rotate(self.br, self.angle + angleOffset)
 
-    # Offset from "base" to "tip"
-    def tip(self, angleOffset):
+    # Offset from "base" to endpoint, "tip" if not found/specified
+    def tip(self, endpoint, angleOffset):
+        sx = self.ani['base']['x']
+        sy = self.ani['base']['y']
+        if endpoint not in self.ani:
+            #print self.name, endpoint, self.ani
+            endpoint = 'tip'
+        ex = self.ani[endpoint]['x']
+        ey = self.ani[endpoint]['y']
+        dx = ex - sx
+        dy = ey - sy
+        #print self.name, endpoint, sx, sy, ex, ey
+
         rad = math.radians(-(self.angle+angleOffset))
-        x = self.dx * math.cos(rad) - self.dy * math.sin(rad)
-        y = self.dx * math.sin(rad) + self.dy * math.cos(rad)
+        x = dx * math.cos(rad) - dy * math.sin(rad)
+        y = dx * math.sin(rad) + dy * math.cos(rad)
         return (int(x), int(y))
 
     def angleOffset(self):

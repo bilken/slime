@@ -3,6 +3,7 @@
 import pygame, sys, json, math, operator
 from pygame.locals import *
 from random import randint
+from time import sleep
 
 from Slime import Animation, Animations
 
@@ -23,28 +24,29 @@ if len(sys.argv) == 2:
 
 a = Animations(aFile)
 myform = a.forms['homonid']
-#myform = a.forms['upper']
-myset = a.sets['hero']
+myset = a.sets['nude']
 
-def drawChain(myform, myset, currentForm, tip, angleOffset):
-    if currentForm not in myform:
-        return
-    for v in myform[currentForm]:
-        o = myset[v]
+def drawChain(level, myform, myset, currentForm, tip, angleOffset):
+    o = None
+    if currentForm in myset:
+        o = myset[currentForm]
         if a.done(o):
-            a.begin(o, attack)
-
+            a.begin(o, currentForm, attack)
         rimg = a.get(o, angleOffset)
-
         rect = rimg.get_rect()
         rect.center = tip
-
         screen.blit(rimg, rect)
 
-        newTip = tuple(map(operator.add, tip, a.tip(o, angleOffset)))
-        newOffset = angleOffset + a.angle(o)
+    if currentForm not in myform:
+        return
 
-        drawChain(myform, myset, v, newTip, newOffset)
+    for v in myform[currentForm]:
+        newTip = tip
+        newOffset = angleOffset
+        if o != None:
+            newTip = tuple(map(operator.add, tip, a.tip(o, v, angleOffset)))
+            newOffset = angleOffset + a.angle(o)
+        drawChain(level + 1, myform, myset, v, newTip, newOffset)
 
 
 r = 0
@@ -59,11 +61,11 @@ while running:
     tip = [screenw / 2, screenh / 2]
     angleOffset = 0
 
-    drawChain(myform, myset, 'start', tip, angleOffset)
+    drawChain(0, myform, myset, 'base', tip, angleOffset)
 
     pygame.display.flip()
 
-    clock.tick(6)
+    clock.tick(2)
 
 pygame.quit()
 
