@@ -15,7 +15,7 @@
     "nudeLeftHand":{
         "file": "pic/noEquip/leftFist.png",
         "base": {"x":9, "y":0},
-        "tip": {"x":9, "y":28},
+        "tip": {"x":9, "y":20},
         "angle": 0
     },
     "nudeLeftFoot":{
@@ -45,7 +45,7 @@
     "nudeRightHand":{
         "file": "pic/noEquip/rightFist.png",
         "base": {"x":9, "y":0},
-        "tip": {"x":9, "y":28},
+        "tip": {"x":9, "y":20},
         "angle": 0
     },
     "nudeRightFoot":{
@@ -63,7 +63,7 @@
     "nudeRightLeg":{
         "file": "pic/noEquip/rightLeg.png",
         "base": {"x":12, "y":0},
-        "tip": {"x":12, "y":32},
+        "tip": {"x":12, "y":34},
         "angle": 0
     },
     "nudeRightUpper":{
@@ -74,7 +74,7 @@
     },
     "nudeTorso":{
         "file": "pic/noEquip/torso.png",
-        "base": {"x":20, "y":53},
+        "base": {"x":20, "y":93},
         "tip": {"x":20, "y":0},
         "head": {"x":20, "y":3},
         "rightUpper": {"x":3, "y":12},
@@ -86,17 +86,21 @@
   },
   "forms":{
     "homonid":{
-        "zorder":["leftHand", "leftFore", "leftUpper", "leftLeg", "leftFoot", "torso", "head", "rightLeg", "rightFoot", "rightUpper", "rightFore", "rightHand", "weapon"],
-        "base":["torso"],
-        "torso":["leftUpper", "leftLeg", "head", "rightLeg", "rightUpper"],
-        "leftUpper":["leftFore"],
-        "leftFore":["leftHand"],
-        "leftHand":["weapon"],
-        "leftLeg":["leftFoot"],
-        "rightUpper":["rightFore"],
-        "rightFore":["rightHand"],
-        "rightHand":["weapon"],
-        "rightLeg":["rightFoot"]
+        "base":{"z":0, "n":["torso"]},
+        "torso":{"z":30, "n":["leftUpper", "leftLeg", "head", "rightLeg", "rightUpper"]},
+        "leftUpper":{"z":32, "n":["leftFore"]},
+        "leftFore":{"z":26, "n":["leftHand"]},
+        "leftHand":{"z":28, "n":["leftWeapon"]},
+        "leftLeg":{"z":28, "n":["leftFoot"]},
+        "leftFoot":{"z":30, "n":[]},
+        "rightUpper":{"z":36, "n":["rightFore"]},
+        "rightFore":{"z":34, "n":["rightHand"]},
+        "rightHand":{"z":36, "n":["rightWeapon"]},
+        "rightLeg":{"z":26, "n":["rightFoot"]},
+        "rightFoot":{"z":28, "n":[]},
+        "head":{"z":30, "n":[]},
+        "rightWeapon":{"z":32, "n":[]},
+        "leftWeapon":{"z":26, "n":[]}
     }
   },
   "sets":{
@@ -113,13 +117,14 @@
         "rightHand":"nudeRightHand",
         "rightLeg":"nudeRightLeg",
         "rightFoot":"nudeRightFoot",
-        "weapon":"sword"
+        "leftWeapon":"sword",
+        "rightWeapon":"sword"
     },
     "blah":{
         "rightFore":"rfa1",
         "rightUpper":"rua1",
         "rightHand":"rh1",
-        "weapon":"sword"
+        "rightWeapon":"sword"
     }
   },
   "sequences":{

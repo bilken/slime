@@ -99,6 +99,8 @@ class Animation:
             if self.index >= len(self.sequence):
                 self.sequence = None
                 self.index = 0
+        else:
+            self.angle = self.orgAngle
         return pygame.transform.rotate(self.br, self.angle + angleOffset)
 
     # Offset from "base" to endpoint, "tip" if not found/specified

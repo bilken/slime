@@ -17,7 +17,7 @@ pygame.display.set_caption("ani")
 clock = pygame.time.Clock()
 
 aFile = 'Slime.ani'
-attack = 'strike'
+action = None
 
 if len(sys.argv) == 2:
     attack = sys.argv[1]
@@ -26,46 +26,88 @@ a = Animations(aFile)
 myform = a.forms['homonid']
 myset = a.sets['nude']
 
-def drawChain(level, myform, myset, currentForm, tip, angleOffset):
+def imageChain(myform, myset, currentForm, tip, angleOffset):
     o = None
+    l = list()
     if currentForm in myset:
         o = myset[currentForm]
-        if a.done(o):
-            a.begin(o, currentForm, attack)
+        if action:
+            a.begin(o, currentForm, action)
         rimg = a.get(o, angleOffset)
         rect = rimg.get_rect()
         rect.center = tip
-        screen.blit(rimg, rect)
+        zorder = 0
+        if currentForm in myform:
+            zorder = myform[currentForm]['z']
+        l.append({"i":rimg, "r":rect, "z":zorder})
 
     if currentForm not in myform:
-        return
+        print 'no %s' % (currentForm)
+        return l
 
-    for v in myform[currentForm]:
+    for v in myform[currentForm]['n']:
         newTip = tip
         newOffset = angleOffset
         if o != None:
             newTip = tuple(map(operator.add, tip, a.tip(o, v, angleOffset)))
             newOffset = angleOffset + a.angle(o)
-        drawChain(level + 1, myform, myset, v, newTip, newOffset)
+        l = l + imageChain(myform, myset, v, newTip, newOffset)
 
+    return l
 
-r = 0
+x = 0
+y = 0
+yoff = 0
+left = False
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_l]:
+        left = True
+        x -= 5
+    if keys[pygame.K_j]:
+        left = False
+        x += 5
+    if keys[pygame.K_SPACE]:
+        if y == 0:
+            yoff = 1
+    if keys[pygame.K_a]:
+        action = 'strike'
+    if keys[pygame.K_s]:
+        action = 'dive'
+
+    if yoff:
+        y = yoff * yoff - 25 * yoff + 10
+        yoff = yoff + 1
+        if y > 0:
+            y = 0
+            yoff = 0
+
     screen.fill((50,50,50))
 
-    tip = [screenw / 2, screenh / 2]
+    spacing = 50
+    offset = x % spacing
+    for w in range(offset, screenw, spacing):
+        pygame.draw.line(screen, (0,0,0), (w, 0), (w, screenh))
+    floor = screenh * 3 / 4
+    pygame.draw.line(screen, (0,0,0), (0, floor), (screenw, floor))
+
+    tip = [screenw / 2, floor + y]
     angleOffset = 0
 
-    drawChain(0, myform, myset, 'base', tip, angleOffset)
+    images = imageChain(myform, myset, 'base', tip, angleOffset)
+    for i in sorted(images, key=lambda d: d["z"]):
+        screen.blit(i["i"], i["r"])
+
+    action = None
 
     pygame.display.flip()
 
-    clock.tick(2)
+    clock.tick(30)
 
 pygame.quit()
 
