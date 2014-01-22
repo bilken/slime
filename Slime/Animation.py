@@ -36,6 +36,9 @@ class Animations:
     def tip(self, item, endpoint, angleOffset):
         return self.items[item].tip(endpoint, angleOffset)
 
+    def rect(self, item):
+        return self.items[item].rect()
+
     def angle(self, item):
         return self.items[item].angle
 
@@ -47,6 +50,7 @@ class Animation:
 * Execute animation sequences
 """
     def __init__(self, ani):
+        # TODO don't load all images unconditionally
         self.ani = ani
 
         self.sequence = None
@@ -62,7 +66,6 @@ class Animation:
         self.orgAngle = self.ani['angle']
         self.angle = self.orgAngle
 
-
         brw = 2 * sx
         brx = 0
         if brw < iw:
@@ -77,6 +80,8 @@ class Animation:
         self.br = pygame.Surface((brw, brh)).convert_alpha()
         self.br.fill((0,0,0,0))
         self.br.blit(img, (brx, bry))
+
+        self.r = pygame.Rect(brx, bry, iw, ih)
 
         print '%s size (%d, %d), start (%d, %d), bound (%d, %d), at (%d, %d)' % (self.name, iw, ih, sx, sy, brw, brh, brx, bry)
 
@@ -103,23 +108,31 @@ class Animation:
             self.angle = self.orgAngle
         return pygame.transform.rotate(self.br, self.angle + angleOffset)
 
-    # Offset from "base" to endpoint, "tip" if not found/specified
-    def tip(self, endpoint, angleOffset):
+    def rpoint(self, ex, ey, angle):
         sx = self.ani['base']['x']
         sy = self.ani['base']['y']
-        if endpoint not in self.ani:
-            #print self.name, endpoint, self.ani
-            endpoint = 'tip'
-        ex = self.ani[endpoint]['x']
-        ey = self.ani[endpoint]['y']
         dx = ex - sx
         dy = ey - sy
-        #print self.name, endpoint, sx, sy, ex, ey
-
-        rad = math.radians(-(self.angle+angleOffset))
+        rad = math.radians(-angle)
         x = dx * math.cos(rad) - dy * math.sin(rad)
         y = dx * math.sin(rad) + dy * math.cos(rad)
         return (int(x), int(y))
+
+    # Offset from "base" to endpoint, "tip" if not found/specified
+    def tip(self, endpoint, angleOffset):
+        if endpoint not in self.ani:
+            endpoint = 'tip'
+        ex = self.ani[endpoint]['x']
+        ey = self.ani[endpoint]['y']
+        return self.rpoint(ex, ey, self.angle + angleOffset)
+
+    def rect(self):
+        #x1,y1 = self.rpoint(self.r.x, self.r.y, self.angle)
+        #x2,y2 = self.rpoint(self.r.x + self.r.w, self.r.y + self.r.h, self.angle)
+        #print self.angle, self.r.x, self.r.y, x1, y1
+        #nr = pygame.Rect(x1, y1, x2 - x1, y2 - y1)
+        #return nr
+        return self.r
 
     def angleOffset(self):
         return self.angle - self.orgAngle

@@ -44,11 +44,17 @@ while running:
 
     pygame.draw.rect(screen, (255,255,255,0), (screenw/2-2, screenh/2-2, 4, 4))
 
-    r += 5
+    rect2 = a.rect(item).copy()
+    rect2.x = rect.x + rect2.x
+    rect2.y = rect.y + rect2.y
+    pygame.draw.rect(screen, (255,0,0), rect2, 1)
+    pygame.draw.rect(screen, (0, 255,0), rect, 1)
+
+    #r += 45
 
     pygame.display.flip()
 
-    clock.tick(20)
+    clock.tick(2)
 
 pygame.quit()
 

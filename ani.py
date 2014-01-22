@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import pygame, sys, json, math, operator
+import pygame, sys, math, operator
 from pygame.locals import *
 from random import randint
 from time import sleep
@@ -39,7 +39,15 @@ def imageChain(myform, myset, currentForm, tip, angleOffset):
         zorder = 0
         if currentForm in myform:
             zorder = myform[currentForm]['z']
-        l.append({"i":rimg, "r":rect, "z":zorder})
+
+        if angleOffset == 0 and a.angle(o) == 0:
+            r = a.rect(o).copy()
+            r.x = rect.x + r.x
+            r.y = rect.y + r.y
+            l.append({"n":currentForm, "i":rimg, "r":rect, "z":zorder, "o":r})
+        else:
+            l.append({"n":currentForm, "i":rimg, "r":rect, "z":zorder})
+
 
     if currentForm not in myform:
         print 'no %s' % (currentForm)
@@ -61,9 +69,13 @@ yoff = 0
 left = False
 running = True
 while running:
+    mousePos = None
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mousePos = event.pos
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_l]:
@@ -102,6 +114,14 @@ while running:
     images = imageChain(myform, myset, 'base', tip, angleOffset)
     for i in sorted(images, key=lambda d: d["z"]):
         screen.blit(i["i"], i["r"])
+        if 'o' in i:
+            pygame.draw.rect(screen, (255,0,0), i['o'], 1)
+
+    if mousePos:
+        mx, my = mousePos
+        for i in images:
+            if 'o' in i and i['o'].collidepoint(mx, my):
+                print i['n']
 
     action = None
 
